@@ -31,30 +31,35 @@ export class Authorization {
     private redirectUrl : string;
     private logger = Logger.getLogger();
     private accessToken? : AccessToken;
+    private requestData : string;
+    private requestConfig : any;
 
-    constructor(authKey : string, authSecret : string, authCode : string, redirectUrl : string) {
+    constructor(authKey : string, authSecret : string, authCode : string, redirectUrl : string, accessToken? : AccessToken) {
         this.authKey = authKey;
         this.authSecret = authSecret;
         this.authCode = authCode;
         this.redirectUrl = redirectUrl;
-    }
+        this.accessToken = accessToken;
 
+        this.requestData = new url.URLSearchParams({
+            grant_type: "authorization_code",
+            code: this.authCode,
+            redirect_uri: this.redirectUrl
+        }).toString()
+
+        let authorization = Buffer.from(`${this.authKey}:${this.authSecret}`).toString("base64")
+        this.requestConfig = {
+            headers: {
+                Authorization: `Basic ${authorization}`,
+                "Content-type": 'application/x-www-form-urlencoded'
+            }
+        }
+
+    }
+    
     async generateAccessToken() {
         try {
-            let data = new url.URLSearchParams({
-                grant_type: "authorization_code",
-                code: this.authCode,
-                redirect_uri: this.redirectUrl
-            }).toString()
-
-            let authorization = Buffer.from(`${this.authKey}:${this.authSecret}`).toString("base64")
-            let config = {
-                headers: {
-                    Authorization: `Basic ${authorization}`,
-                    "Content-type": 'application/x-www-form-urlencoded'
-                }
-            }
-            await axios.post("https://api.sonos.com/login/v3/oauth/access", data, config).then(response => {
+            await axios.post("https://api.sonos.com/login/v3/oauth/access", this.requestData, this.requestConfig).then(response => {
                 this.accessToken = response.data;
             });
 

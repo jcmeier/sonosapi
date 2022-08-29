@@ -1,8 +1,8 @@
 
 import { exit } from 'process';
-import { AuthTokenGenerator } from './sonosapi/auth'
-import getEnvParameter from './util/env';
-import Logger from './util/logger'
+import { AuthTokenGenerator } from '../sonosapi/auth'
+import getEnvParameter from '../util/env';
+import Logger from '../util/logger'
 
 const logger = Logger.getLogger();
 
