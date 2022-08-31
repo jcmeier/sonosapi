@@ -6,13 +6,13 @@ import { AccessToken } from "./auth";
 abstract class SonosControlAPIClient {
     private accessToken : AccessToken;
     private url = "https://api.ws.sonos.com/control/api/v1";
-    private logger = Logger.getLogger();
+    protected logger = Logger.getLogger();
 
     constructor(accessToken : AccessToken) {
         this.accessToken = accessToken;
     }
 
-    getCall(endpoint : String) : Promise<any> {
+    protected getCall(endpoint : String) : Promise<any> {
         try {
             let config = {
                 headers: {
@@ -35,8 +35,9 @@ abstract class SonosControlAPIClient {
     }
 }
 
-class HouseHoldsAPIClient extends SonosControlAPIClient {
-    public getHouseHolds() {
-        super.getCall("households");
+export class HouseHoldsAPIClient extends SonosControlAPIClient {
+    public async getHouseHolds() : Promise<Households> {
+        let response = await super.getCall("households");
+        return response.data as Households
     }
 }

@@ -34,12 +34,11 @@ export class Authorization {
     private requestData : string;
     private requestConfig : any;
 
-    constructor(authKey : string, authSecret : string, authCode : string, redirectUrl : string, accessToken? : AccessToken) {
+    constructor(authKey : string, authSecret : string, authCode : string, redirectUrl : string) {
         this.authKey = authKey;
         this.authSecret = authSecret;
         this.authCode = authCode;
         this.redirectUrl = redirectUrl;
-        this.accessToken = accessToken;
 
         this.requestData = new url.URLSearchParams({
             grant_type: "authorization_code",

@@ -10,5 +10,5 @@ const redirectUrl = getEnvParameter("REDIRECT_URL");
 const auth = new Authorization(authKey, authSecret, authCode, redirectUrl);
 auth.generateAccessToken().then(() => {
     let token = auth.getAccessToken();
-    fs.writeFileSync("token.json", JSON.stringify(token));
+    fs.writeFileSync("../token.json", JSON.stringify(token));
 });
