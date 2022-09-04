@@ -3,8 +3,9 @@ import { access } from "fs";
 import Logger from "../util/logger";
 import { AccessToken } from "./auth";
 import { APIAuthenticationError } from "../errors/apierrors"
+import { Groups, Households, Playback } from "./models";
 
-abstract class SonosControlAPIClient {
+abstract class SonosAPIClient {
     private accessToken : AccessToken;
     private url = "https://api.ws.sonos.com/control/api/v1";
     protected logger = Logger.getLogger();
@@ -39,16 +40,23 @@ abstract class SonosControlAPIClient {
     }
 }
 
-export class HouseHoldsAPIClient extends SonosControlAPIClient {
-    public async getHouseHolds() : Promise<Households[]> {
+export class HouseHoldsAPIClient extends SonosAPIClient {
+    public async getHouseHolds() : Promise<Households> {
         let response = await super.getCall("households");
-        return response.data as Households[]
+        return response.data as Households
     }
 }
 
-export class GroupsAPIClient extends SonosControlAPIClient {
-    public async getGroups(householdId : string) : Promise<Households> {
-        let response = await super.getCall("households");
-        return response.data as Households
+export class GroupsAPIClient extends SonosAPIClient {
+    public async getGroups(householdId : string) : Promise<Groups> {
+        let response = await super.getCall(`/households/${householdId}/groups`);
+        return response.data as Groups
+    }
+}
+
+export class PlaybackClient extends SonosAPIClient {
+    public async getPlayback(groupId : string) : Promise<Playback> {
+        let response = await super.getCall(`/groups/${groupId}/playback`);
+        return response.data as Playback
     }
 }
