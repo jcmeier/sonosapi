@@ -80,6 +80,58 @@ export class Authorization {
     }
 }
 
+export class RefreshTokenAuthorization {
+
+    private authKey : string;
+    private authSecret : string;
+    private logger = Logger.getLogger();
+    private accessToken : AccessToken;
+    private requestData : string;
+    private requestConfig : any;
+
+    constructor(authKey : string, authSecret : string, accessToken : AccessToken) {
+        this.authKey = authKey;
+        this.authSecret = authSecret;
+
+        this.requestData = new url.URLSearchParams({
+            refresh_token: accessToken.refresh_token,
+            grant_type: "refresh_token",
+        }).toString()
+
+        let authorization = Buffer.from(`${this.authKey}:${this.authSecret}`).toString("base64")
+        this.requestConfig = {
+            headers: {
+                Authorization: `Basic ${authorization}`,
+                "Content-type": 'application/x-www-form-urlencoded'
+            }
+        }
+
+    }
+    
+    async refreshAccessToken() {
+        try {
+            await axios.post("https://api.sonos.com/login/v3/oauth/access", this.requestData, this.requestConfig).then(response => {
+                this.accessToken = response.data;
+            });
+
+        } catch(error : any | AxiosError) {
+            if (axios.isAxiosError(error)) {
+                if(error.response != null) {
+                    this.logger.error(`Error authenticating: httpStatus=${error.response.status}: ${JSON.stringify(error.response.data)}`)
+                }
+                return;
+            } 
+            
+            throw error;
+        } 
+             
+    }
+
+    public getAccessToken() : AccessToken | undefined {
+       return this.accessToken
+    }
+}
+
 export interface AccessToken {
     access_token : string;
     token_type : string;
