@@ -3,7 +3,7 @@ import { access } from "fs";
 import Logger from "../util/logger";
 import { AccessToken } from "./auth";
 import { APIAuthenticationError } from "../errors/apierrors"
-import { Groups, Households, Playback } from "./models";
+import { Groups, Households, Playback, PlaybackMetadata } from "./models";
 
 abstract class SonosAPIClient {
     private accessToken : AccessToken;
@@ -58,5 +58,12 @@ export class PlaybackClient extends SonosAPIClient {
     public async getPlayback(groupId : string) : Promise<Playback> {
         let response = await super.getCall(`/groups/${groupId}/playback`);
         return response.data as Playback
+    }
+}
+
+export class PlaybackMetadataClient extends SonosAPIClient {
+    public async getPlaybackMetada(groupId : string ) : Promise<PlaybackMetadata> {
+        let response = await super.getCall(`/groups/${groupId}/playbackMetadata`);
+        return response.data as PlaybackMetadata
     }
 }

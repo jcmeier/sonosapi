@@ -52,3 +52,40 @@ export interface AvailablePlaybackActions {
     canCrossfade: boolean;
     canShuffle: boolean;
 }
+
+export interface PlaybackMetadata {
+    container: Container;
+    currentItem: CurrentItem;
+}
+export interface Container {
+    name: string;
+    type: string;
+    id: Id;
+    service: Service;
+    imageUrl: string;
+}
+export interface Id {
+    serviceId: string;
+    objectId: string;
+    accountId: string;
+}
+export interface Service {
+    name: string;
+    id: string;
+}
+export interface CurrentItem {
+    track: Track;
+}
+export interface Track {
+    type: string;
+    name: string;
+    imageUrl: string;
+    album: AlbumOrArtist;
+    artist: AlbumOrArtist;
+    id: Id;
+    service: Service;
+    durationMillis: number;
+}
+export interface AlbumOrArtist {
+    name: string;
+}

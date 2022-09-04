@@ -1,7 +1,7 @@
 import fs from 'fs'
 import Logger from '../util/logger'
 import { AccessToken } from '../sonosapi/auth'
-import { GroupsAPIClient, HouseHoldsAPIClient, PlaybackClient } from '../sonosapi/apiclient';
+import { GroupsAPIClient, HouseHoldsAPIClient, PlaybackClient, PlaybackMetadataClient } from '../sonosapi/apiclient';
 import { APIAuthenticationError } from '../errors/apierrors';
 
 async function main() {
@@ -21,13 +21,27 @@ async function main() {
         }
 
         const playbackClient = new PlaybackClient(accessToken);
-        const promises = groups.groups.map( g => {
-           return playbackClient.getPlayback(g.id);
+        const promises = groups.groups.map( group => {
+           return playbackClient.getPlayback(group.id);
         });
 
         Promise.all(promises).then(results => {
             results.forEach(playback => {
                 logger.info(playback);
+                logger.info("----");
+            });
+        });
+
+
+        const playbackMetadataClient = new PlaybackMetadataClient(accessToken);
+        const playbackMetadataPromises = groups.groups.map( group => {
+           return playbackMetadataClient.getPlaybackMetada(group.id);
+        });
+
+        Promise.all(playbackMetadataPromises).then(results => {
+            results.forEach(playbackMetadata => {
+                logger.info("Playback meta data");
+                logger.info(playbackMetadata);
                 logger.info("----");
             });
         });
